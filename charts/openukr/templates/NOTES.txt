@@ -1,0 +1,10 @@
+openUKR Operator has been installed.
+
+1. Check the operator status:
+   kubectl get pods -n {{ .Release.Namespace }} -l app.kubernetes.io/instance={{ .Release.Name }}
+
+2. View operator logs:
+   kubectl logs -f -n {{ .Release.Namespace }} -l app.kubernetes.io/instance={{ .Release.Name }}
+
+3. Create a KeyProfile to start managing keys:
+   kubectl apply -f https://raw.githubusercontent.com/openukr/openukr/main/config/samples/openukr_v1alpha1_keyprofile.yaml

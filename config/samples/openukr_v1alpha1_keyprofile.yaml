@@ -1,0 +1,26 @@
+apiVersion: openukr.openukr.io/v1alpha1
+kind: KeyProfile
+metadata:
+  name: payment-api
+  namespace: finance
+spec:
+  serviceAccountRef:
+    name: payment-service
+    namespace: finance
+  keySpec:
+    algorithm: EC
+    params:
+      curve: P-256
+    encoding: PEM
+  rotation:
+    interval: 24h
+    gracePeriod: 2h
+  output:
+    secretName: payment-api-keys
+    format: split-pem
+    labels:
+      app.kubernetes.io/managed-by: openukr
+  publish:
+    - type: filesystem
+      config:
+        path: /var/keys/payment-api

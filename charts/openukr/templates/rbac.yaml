@@ -1,0 +1,63 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ include "openukr.fullname" . }}-manager-role
+  labels:
+    {{- include "openukr.labels" . | nindent 4 }}
+rules:
+- apiGroups: [""]
+  resources: ["secrets", "events"]
+  verbs: ["create", "delete", "get", "list", "patch", "update", "watch"]
+- apiGroups: ["openukr.openukr.io"]
+  resources: ["keyprofiles", "keyprofiles/status", "keyprofiles/finalizers"]
+  verbs: ["create", "delete", "get", "list", "patch", "update", "watch"]
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: {{ include "openukr.fullname" . }}-manager-rolebinding
+  labels:
+    {{- include "openukr.labels" . | nindent 4 }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: {{ include "openukr.fullname" . }}-manager-role
+subjects:
+- kind: ServiceAccount
+  name: {{ include "openukr.serviceAccountName" . }}
+  namespace: {{ .Release.Namespace }}
+
+---
+# Leader election role (namespaced)
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: {{ include "openukr.fullname" . }}-leader-election-role
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "openukr.labels" . | nindent 4 }}
+rules:
+- apiGroups: ["", "coordination.k8s.io"]
+  resources: ["configmaps", "leases"]
+  verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+- apiGroups: [""]
+  resources: ["events"]
+  verbs: ["create", "patch"]
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: {{ include "openukr.fullname" . }}-leader-election-rolebinding
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "openukr.labels" . | nindent 4 }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: {{ include "openukr.fullname" . }}-leader-election-role
+subjects:
+- kind: ServiceAccount
+  name: {{ include "openukr.serviceAccountName" . }}
+  namespace: {{ .Release.Namespace }}

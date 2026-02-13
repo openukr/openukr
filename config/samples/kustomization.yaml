@@ -1,0 +1,4 @@
+## Append samples of your project ##
+resources:
+- openukr_v1alpha1_keyprofile.yaml
+# +kubebuilder:scaffold:manifestskustomizesamples

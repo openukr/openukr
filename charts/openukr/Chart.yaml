@@ -1,0 +1,15 @@
+apiVersion: v2
+name: openukr
+description: A Helm chart for openUKR, the Universal Key Rotation operator.
+type: application
+version: 0.1.0
+appVersion: "0.1.0"
+keywords:
+  - security
+  - key-rotation
+  - kubernetes
+home: https://github.com/openukr/openukr
+sources:
+  - https://github.com/openukr/openukr
+maintainers:
+  - name: openukr-maintainers

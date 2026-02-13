@@ -1,0 +1,137 @@
+# Adds namespace to all resources.
+namespace: openukr-system
+
+# Value of this field is prepended to the
+# names of all resources.
+namePrefix: openukr-
+
+resources:
+- ../crd
+- ../rbac
+- ../manager
+# [WEBHOOK] Webhook is enabled — failurePolicy: Fail [SEC:S-1]
+- ../webhook
+# [CERTMANAGER] cert-manager manages webhook TLS certificates
+- ../certmanager
+# [METRICS] Expose the controller manager metrics service.
+- metrics_service.yaml
+# [NETWORK POLICY] Protect /metrics and Webhook Server
+- ../network-policy
+
+patches:
+# [METRICS] Enable the metrics endpoint using HTTPS on :8443.
+- path: manager_metrics_patch.yaml
+  target:
+    kind: Deployment
+
+# [WEBHOOK] Mount webhook cert volume
+- path: manager_webhook_patch.yaml
+  target:
+    kind: Deployment
+
+replacements:
+# ─── Webhook cert-manager replacements ───
+
+# Inject webhook service name into Certificate dnsNames
+- source:
+    kind: Service
+    version: v1
+    name: webhook-service
+    fieldPath: .metadata.name
+  targets:
+    - select:
+        kind: Certificate
+        group: cert-manager.io
+        version: v1
+        name: serving-cert
+      fieldPaths:
+        - .spec.dnsNames.0
+        - .spec.dnsNames.1
+      options:
+        delimiter: '.'
+        index: 0
+        create: true
+
+# Inject webhook service namespace into Certificate dnsNames
+- source:
+    kind: Service
+    version: v1
+    name: webhook-service
+    fieldPath: .metadata.namespace
+  targets:
+    - select:
+        kind: Certificate
+        group: cert-manager.io
+        version: v1
+        name: serving-cert
+      fieldPaths:
+        - .spec.dnsNames.0
+        - .spec.dnsNames.1
+      options:
+        delimiter: '.'
+        index: 1
+        create: true
+
+# Inject cert-manager CA into ValidatingWebhookConfiguration
+- source:
+    kind: Certificate
+    group: cert-manager.io
+    version: v1
+    name: serving-cert
+    fieldPath: .metadata.namespace
+  targets:
+    - select:
+        kind: ValidatingWebhookConfiguration
+      fieldPaths:
+        - .metadata.annotations.[cert-manager.io/inject-ca-from]
+      options:
+        delimiter: '/'
+        index: 0
+        create: true
+- source:
+    kind: Certificate
+    group: cert-manager.io
+    version: v1
+    name: serving-cert
+    fieldPath: .metadata.name
+  targets:
+    - select:
+        kind: ValidatingWebhookConfiguration
+      fieldPaths:
+        - .metadata.annotations.[cert-manager.io/inject-ca-from]
+      options:
+        delimiter: '/'
+        index: 1
+        create: true
+
+# Inject cert-manager CA into MutatingWebhookConfiguration
+- source:
+    kind: Certificate
+    group: cert-manager.io
+    version: v1
+    name: serving-cert
+    fieldPath: .metadata.namespace
+  targets:
+    - select:
+        kind: MutatingWebhookConfiguration
+      fieldPaths:
+        - .metadata.annotations.[cert-manager.io/inject-ca-from]
+      options:
+        delimiter: '/'
+        index: 0
+        create: true
+- source:
+    kind: Certificate
+    group: cert-manager.io
+    version: v1
+    name: serving-cert
+    fieldPath: .metadata.name
+  targets:
+    - select:
+        kind: MutatingWebhookConfiguration
+      fieldPaths:
+        - .metadata.annotations.[cert-manager.io/inject-ca-from]
+      options:
+        delimiter: '/'
+        index: 1
+        create: true

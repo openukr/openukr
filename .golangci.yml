@@ -1,0 +1,124 @@
+run:
+  timeout: 5m
+  tests: true
+
+linters:
+  enable:
+    # Bugs & Correctness
+    - errcheck
+    - govet
+    - staticcheck
+    - unused
+    - bodyclose
+    - nilerr
+    - wastedassign
+
+    # Security
+    - gosec
+
+    # Code Quality
+    - gocritic
+    - revive
+    - gocyclo
+    - gocognit
+    - dupl
+    - goconst
+    - misspell
+    - unconvert
+    - unparam
+
+    # Style
+    - gofmt
+    - goimports
+    - whitespace
+    - predeclared
+    - nolintlint
+
+    # Error Handling
+    - errorlint
+    - wrapcheck
+
+  disable:
+    - depguard
+    - exhaustruct
+
+linters-settings:
+  gocyclo:
+    min-complexity: 15
+
+  gocognit:
+    min-complexity: 20
+
+  dupl:
+    threshold: 100
+
+  gocritic:
+    enabled-tags:
+      - diagnostic
+      - style
+      - performance
+      - opinionated
+
+  revive:
+    rules:
+      - name: exported
+        severity: warning
+      - name: unexported-return
+        severity: warning
+      - name: blank-imports
+        severity: error
+      - name: context-as-argument
+        severity: error
+      - name: dot-imports
+        severity: error
+      - name: error-return
+        severity: error
+      - name: error-naming
+        severity: error
+      - name: error-strings
+        severity: warning
+      - name: increment-decrement
+        severity: warning
+      - name: var-declaration
+        severity: warning
+      - name: package-comments
+        severity: warning
+
+  gosec:
+    excludes:
+      - G115 # Integer overflow — false positives with K8s types
+
+  errorlint:
+    errorf: true
+    errorf-multi: true
+    asserts: true
+    comparison: true
+
+  wrapcheck:
+    ignoreSigs:
+      - ".Errorf("
+      - "errors.New("
+      - "errors.Unwrap("
+      - "errors.Join("
+      - ".Wrap("
+      - ".Wrapf("
+    ignorePackageGlobs:
+      - "github.com/openukr/openukr/internal/*"
+      - "github.com/openukr/openukr/pkg/*"
+
+issues:
+  exclude-rules:
+    # Test files: relax some rules
+    - path: _test\.go
+      linters:
+        - dupl
+        - gocritic
+        - wrapcheck
+        - gocyclo
+        - gocognit
+    # Generated files
+    - path: zz_generated
+      linters:
+        - all
+  max-issues-per-linter: 0
+  max-same-issues: 0
