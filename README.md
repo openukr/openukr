@@ -258,7 +258,7 @@ graph TD
 
 | Document | Description |
 |---|---|
-| [Compliance Guide](https://github.com/openukr/.github/blob/main/docs/operations/COMPLIANCE_GUIDE.md) | Operational requirements (etcd encryption, NTP, DSFA) |
+| [Compliance Guide](https://github.com/openukr/.github/blob/main/docs/operations/COMPLIANCE_GUIDE.md) | Operational requirements (etcd encryption, NTP, DPIA) |
 | [Disaster Recovery](https://github.com/openukr/.github/blob/main/docs/operations/DISASTER_RECOVERY.md) | RTO/RPO definitions and recovery procedures |
 | [Security Policy](https://github.com/openukr/.github/blob/main/SECURITY.md) | Hardening details, vulnerability reporting, and compliance mapping |
 | [Roadmap](https://github.com/openukr/.github/blob/main/ROADMAP.md) | Planned features and version milestones |
