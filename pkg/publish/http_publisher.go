@@ -111,7 +111,7 @@ func (p *HTTPPublisher) Publish(ctx context.Context, target openukrv1alpha1.Publ
 		}
 	}
 
-	resp, err := httpClient.Do(req)
+	resp, err := httpClient.Do(req) // #nosec G704 -- Endpoint is controlled by CRD admin, HTTPS enforced
 	if err != nil {
 		return fmt.Errorf("request to %s failed: %w", endpoint, err)
 	}

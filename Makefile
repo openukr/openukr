@@ -66,29 +66,16 @@ test: manifests generate fmt vet setup-envtest ## Run tests.
 # CertManager is installed by default; skip with:
 # - CERT_MANAGER_INSTALL_SKIP=true
 .PHONY: test-e2e
-test-e2e: manifests generate fmt vet ## Run the e2e tests.
+test-e2e: manifests generate fmt vet ## Run the e2e tests. Expected an isolated environment using Kind.
 	@command -v $(KIND) >/dev/null 2>&1 || { \
-		echo "Kind is not installed. Please install Kind: https://kind.sigs.k8s.io/docs/user/quick-start/"; \
+		echo "Kind is not installed. Please install Kind manually."; \
 		exit 1; \
 	}
-	@if ! $(KIND) get clusters | grep -q 'kind'; then \
-		echo "Creating temporary Kind cluster for E2E tests..."; \
-		$(KIND) create cluster --name openukr-e2e; \
-		trap '$(KIND) delete cluster --name openukr-e2e' EXIT; \
-		go test ./test/e2e/ -v -ginkgo.v; \
-	else \
-		echo "Using existing Kind cluster..."; \
-		go test ./test/e2e/ -v -ginkgo.v; \
-	fi
-
-.PHONY: kind-up
-kind-up: ## Create a Kind cluster for local development.
-	@$(KIND) get clusters | grep -q 'kind' || $(KIND) create cluster --name openukr-dev
-
-.PHONY: kind-down
-kind-down: ## Delete the Kind cluster.
-	@$(KIND) delete cluster --name openukr-dev || true
-	@$(KIND) delete cluster --name openukr-e2e || true
+	@$(KIND) get clusters | grep -q 'kind' || { \
+		echo "No Kind cluster is running. Please start a Kind cluster before running the e2e tests."; \
+		exit 1; \
+	}
+	go test ./test/e2e/ -v -ginkgo.v
 
 .PHONY: lint
 lint: golangci-lint ## Run golangci-lint linter

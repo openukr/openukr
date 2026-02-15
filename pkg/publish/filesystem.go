@@ -74,7 +74,7 @@ func (p *FilesystemPublisher) Publish(ctx context.Context, target openukrv1alpha
 	// [SEC:S-3] Atomic write: write to temp file, then rename.
 	// This prevents partial writes from being observable.
 	tmpFile := filename + ".tmp"
-	if err := os.WriteFile(tmpFile, pubPEM, 0444); err != nil {
+	if err := os.WriteFile(tmpFile, pubPEM, 0600); err != nil {
 		return fmt.Errorf("failed to write temp file %s: %w", tmpFile, err)
 	}
 	if err := os.Rename(tmpFile, filename); err != nil {

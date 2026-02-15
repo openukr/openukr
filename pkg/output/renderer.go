@@ -44,7 +44,7 @@ type RenderOptions struct {
 
 	// Password is used for JKS encryption.
 	// If empty, a default password might be used or error returned.
-	Password string
+	Password string `json:"-"`
 
 	// Alias is the alias for the key in JKS.
 	// Defaults to "openukr-key" if empty.
