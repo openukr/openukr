@@ -1,5 +1,3 @@
-<![CDATA[<div align="center">
-
 # 🔐 openUKR
 
 ### Universal Key Rotator
